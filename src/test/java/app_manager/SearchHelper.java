@@ -36,12 +36,16 @@ public class SearchHelper extends HelperBase{
     private void addPassengers(int adults, int kids) {
         clickWithRetrial(By.cssSelector("div.additional-fields__label"));
 
-        for (int i = 1; i < adults; i++) {
-            clickWithRetrial(By.cssSelector("div.additional-fields__passenger-row:nth-child(1) a.--increment"));
+        if (adults > 1) {
+            for (int i = 1; i < adults; i++) {
+                clickWithRetrial(By.cssSelector("div.additional-fields__passenger-row:nth-child(1) a.--increment"));
+            }
         }
 
-        for (int i = 0; i < kids; i ++) {
-            wd.findElement(By.cssSelector("div.additional-fields__passenger-row:nth-child(2) a.--increment")).click();
+        if (kids > 0) {
+            for (int i = 0; i < kids; i++) {
+                wd.findElement(By.cssSelector("div.additional-fields__passenger-row:nth-child(2) a.--increment")).click();
+            }
         }
     }
 

@@ -7,6 +7,17 @@ public class Booking {
     private int kidsAmount;
     private String serviceClass;
 
+    public boolean hasBuggage() {
+        return hasBuggage;
+    }
+
+    public Booking withBuggage(boolean hasBuggage) {
+        this.hasBuggage = hasBuggage;
+        return this;
+    }
+
+    private boolean hasBuggage;
+
     public int getTransfersAmount() {
         return transfersAmount;
     }
