@@ -13,11 +13,11 @@ public class ApplicationManager {
     WebDriver wd;
     private SearchHelper searchHelper;
     private SearchResultsHelper searchResultsHelper;
+    private FileHelper fileHelper;
 
     public ApplicationManager() {
         properties = new Properties();
     }
-
 
     public void init() throws IOException {
         properties.load(new FileReader(new File("./src/test/resources/local.properties")));
@@ -28,6 +28,7 @@ public class ApplicationManager {
         wd.get(properties.getProperty("web.baseurl"));
         searchHelper = new SearchHelper(wd);
         searchResultsHelper = new SearchResultsHelper(wd);
+        fileHelper = new FileHelper(wd);
     }
 
     public void stop() {
@@ -40,5 +41,9 @@ public class ApplicationManager {
 
     public SearchResultsHelper searchResults() {
         return searchResultsHelper;
+    }
+
+    public FileHelper file() {
+        return fileHelper;
     }
 }

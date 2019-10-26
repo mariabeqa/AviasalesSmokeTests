@@ -5,8 +5,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.Random;
-
 public class SearchHelper extends HelperBase{
 
     public SearchHelper(WebDriver wd) {
@@ -56,9 +54,7 @@ public class SearchHelper extends HelperBase{
     }
 
     public void selectRandomDayTo(int duration) {
-        Random rand = new Random();
-        int day = rand.nextInt(duration);
-        wd.findElements(By.xpath("//div[@class ='daypicker__day-wrap']")).get(day).click();
+        wd.findElements(By.xpath("//div[@class ='daypicker__day-wrap']")).get(duration).click();
     }
 
     private void selectDayFrom() {
