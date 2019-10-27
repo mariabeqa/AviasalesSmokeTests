@@ -1,8 +1,5 @@
 package app_manager;
 
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.File;
@@ -17,6 +14,7 @@ public class ApplicationManager {
     private SearchHelper searchHelper;
     private SearchResultsHelper searchResultsHelper;
     private FileHelper fileHelper;
+    private CalendarHelper calendarHelper;
 
     public ApplicationManager() {
         properties = new Properties();
@@ -28,10 +26,19 @@ public class ApplicationManager {
         wd = new ChromeDriver();
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         wd.manage().window().fullscreen();
-        wd.get(properties.getProperty("web.baseurl"));
+        wd.get(properties.getProperty("site.url"));
         searchHelper = new SearchHelper(wd);
         searchResultsHelper = new SearchResultsHelper(wd);
         fileHelper = new FileHelper(wd);
+        calendarHelper = new CalendarHelper(wd);
+    }
+
+    public void openCalendar() {
+        wd.get(properties.getProperty("calendar.url"));
+    }
+
+    public void openWebsite() {
+
     }
 
     public void stop() {
@@ -50,4 +57,7 @@ public class ApplicationManager {
         return fileHelper;
     }
 
+    public CalendarHelper calendar() {
+        return calendarHelper;
+    }
 }
