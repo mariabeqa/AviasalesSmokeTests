@@ -1,11 +1,14 @@
 package app_manager;
 
+import org.apache.commons.collections4.ListUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+
 
 public class SearchResultsHelper extends HelperBase {
     public SearchResultsHelper (WebDriver wd) {
@@ -23,7 +26,7 @@ public class SearchResultsHelper extends HelperBase {
     private void waitForSearchResultsToLoad() {
         switchToSearchResultsInNewWindow();
         wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
-        WebDriverWait wait = new WebDriverWait(wd, 20);
+        WebDriverWait wait = new WebDriverWait(wd, 30);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("li.sorting__tab.is-active")));
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
@@ -36,13 +39,19 @@ public class SearchResultsHelper extends HelperBase {
 
     public void filterByTransfer(int transfer) {
         if (transfer == 0) {
-            clickWithRetrial(By.cssSelector("div.checkboxes-list__list div.checkboxes-list__item:nth-child(2) span.checkbox"));
-            if(wd.findElement(By.cssSelector("input#stops_2")).isSelected()) {
-                clickWithRetrial(By.cssSelector("div.checkboxes-list__list div.checkboxes-list__item:nth-child(3) span.checkbox"));
+            try {
+                if (wd.findElement(By.cssSelector("input#stops_1")).isSelected()) {
+                    clickWithRetrial(By.cssSelector("label[for='stops_1'] span.checkbox__face"));
+                } else if (isElementPresent(By.cssSelector("label[for='stops_2'] span.checkbox__face"))) {
+                    if(wd.findElement(By.cssSelector("input#stops_2")).isSelected())
+                        clickWithRetrial(By.cssSelector("label[for='stops_2'] span.checkbox__face"));
+                } else if(isElementPresent(By.cssSelector("label[for='stops_3'] span.checkbox__face"))) {
+                    if (wd.findElement(By.cssSelector("input#stops_3")).isSelected())
+                        clickWithRetrial(By.cssSelector("label[for='stops_3'] span.checkbox__face"));
+                }
+            } catch (NoSuchElementException e) {
+                e.printStackTrace();
             }
-        } else if (transfer == 1) {
-            wd.findElement(By.cssSelector("div.checkboxes-list__list div.checkboxes-list__item:nth-child(3) span.checkbox")).click();
-            wd.findElement(By.cssSelector("div.checkboxes-list__list div.checkboxes-list__item:nth-child(1) span.checkbox")).click();
         }
     }
 
@@ -53,7 +62,8 @@ public class SearchResultsHelper extends HelperBase {
         clickWithRetrial(By.cssSelector("div.--baggage div"));
 
         if (hasBuggage) {
-            wd.findElement(By.cssSelector("label[for='baggage_no_baggage'] span")).click();
+            if (isElementPresent(By.cssSelector("label[for='baggage_no_baggage'] span")))
+                wd.findElement(By.cssSelector("label[for='baggage_no_baggage'] span")).click();
         } else {
             wd.findElement(By.cssSelector("label[for='baggage_full_baggage'] span.checkbox")).click();
         }
@@ -68,40 +78,48 @@ public class SearchResultsHelper extends HelperBase {
         js.executeScript("arguments[0].scrollIntoView();", element);
     }
 
-    public String getDepartureAirportTo() {
-        return wd.findElement(By.xpath("(//div[@class='ticket-desktop__segment'])[1]//div[@class='segment-route__endpoint origin']//div[@class='segment-route__city']")).getText();
+    public String getDepartureAirport(int routeNumber) {
+        String airport = "";
+
+        while (airport == "") {
+
+            try {
+                if (isElementPresent(By.xpath("(//div[@class='ticket-desktop__segment'])[" + routeNumber + "]//div[@class='segment-route__endpoint origin']//div[@class='segment-route__city']"))) {
+                    airport = wd.findElement(By.xpath("(//div[@class='ticket-desktop__segment'])[" + routeNumber + "]//div[@class='segment-route__endpoint origin']//div[@class='segment-route__city']")).getText();
+                }
+            } catch (StaleElementReferenceException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return airport;
     }
 
-    public String getArrivalAirportTo() {
-        return wd.findElement(By.xpath("(//div[@class='ticket-desktop__segment'])[1]//div[@class='segment-route__endpoint destination']//div[@class='segment-route__city']")).getText();
-    }
-
-    public String getDepartureAirportBack() {
-        return wd.findElement(By.xpath("(//div[@class='ticket-desktop__segment'])[2]//div[@class='segment-route__endpoint origin']//div[@class='segment-route__city']")).getText();
-    }
-
-    public String getArrivalAirportBack() {
-        return wd.findElement(By.xpath("(//div[@class='ticket-desktop__segment'])[2]//div[@class='segment-route__endpoint destination']//div[@class='segment-route__city']")).getText();
+    public String getArrivalAirport(int routeNumber) {
+        return wd.findElement(By.xpath("(//div[@class='ticket-desktop__segment'])[" + routeNumber + "]//div[@class='segment-route__endpoint destination']//div[@class='segment-route__city']")).getText();
     }
 
     public List<WebElement> getTicketsWithBaggageOption() {
         int size = 0;
-        List<WebElement> tickets = new ArrayList<>();
+        List<WebElement> withBuggage = new ArrayList<>();
+        List<WebElement> baggageUnknown = new ArrayList<>();
+
         try {
             while (size == 0) {
-                tickets = wd.findElements(By.xpath("//div[@class='ticket-tariffs__title'][contains(text(),'С багажом')]"));
-                size = tickets.size();
+                baggageUnknown =  wd.findElements(By.xpath("//div[@class='ticket-tariffs__title'][contains(text(),'Багаж неизвестен')]"));
+                withBuggage = wd.findElements(By.xpath("//div[@class='ticket-tariffs__title'][contains(text(),'С багажом')]"));
+                size = withBuggage.size();
             }
         } catch (StaleElementReferenceException e) {
             System.err.println("StaleElementReferenceException caught");
         }
+        List<WebElement> result = ListUtils.union(withBuggage, baggageUnknown);
 
-        return tickets;
+        return result;
     }
 
     public int getAmountOfTicketsFound() {
         int amountOfTickets = wd.findElements(By.xpath("//a[@class='b-button buy-button__button --primary --size-l']")).size();
-        System.out.println(amountOfTickets + " amountOfTickets");
         return amountOfTickets;
     }
 }

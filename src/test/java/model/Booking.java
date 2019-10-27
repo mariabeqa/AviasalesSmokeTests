@@ -1,11 +1,35 @@
 package model;
 
+import java.util.List;
+
 public class Booking {
-    private String whereTo;
-    private String from;
+    private List<String> departureAirports;
+    private List<String> destinationAirports;
     private int adultsAmount;
     private int kidsAmount;
     private String serviceClass;
+    private boolean hasBuggage;
+    private int transfersAmount;
+    private int[] durations;
+    private int numberOfRoutes;
+
+    public int getNumberOfRoutes() {
+        return numberOfRoutes;
+    }
+
+    public Booking withNumberOfRoutes(int numberOfRoutes) {
+        this.numberOfRoutes = numberOfRoutes;
+        return this;
+    }
+
+    public int[] getDurations() {
+        return durations;
+    }
+
+    public Booking withDurations(int[] durations) {
+        this.durations = durations;
+        return this;
+    }
 
     public boolean hasBuggage() {
         return hasBuggage;
@@ -16,8 +40,6 @@ public class Booking {
         return this;
     }
 
-    private boolean hasBuggage;
-
     public int getTransfersAmount() {
         return transfersAmount;
     }
@@ -27,34 +49,21 @@ public class Booking {
         return this;
     }
 
-    private int transfersAmount;
-
-    public int getDuration() {
-        return duration;
+    public List<String> getDestinationAirports() {
+        return destinationAirports;
     }
 
-    public Booking withDuration(int duration) {
-        this.duration = duration;
+    public Booking withDestinationAirports(List<String> destinationAirports) {
+        this.destinationAirports = destinationAirports;
         return this;
     }
 
-    private int duration;
-
-    public String getWhereTo() {
-        return whereTo;
+    public List<String> getDepartureAirports() {
+        return departureAirports;
     }
 
-    public Booking withWhereTo(String where) {
-        this.whereTo = where;
-        return this;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public Booking withFrom(String from) {
-        this.from = from;
+    public Booking withDepartureAirports(List<String> departureAirports) {
+        this.departureAirports = departureAirports;
         return this;
     }
 

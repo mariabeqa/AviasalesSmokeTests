@@ -12,16 +12,24 @@ public class HelperBase {
     public boolean clickWithRetrial(By by) {
         boolean result = false;
         int attempts = 0;
-        while(attempts < 2) {
+        while(attempts < 5) {
             try {
                 wd.findElement(by).click();
                 result = true;
                 break;
-            } catch(StaleElementReferenceException | ElementClickInterceptedException e) {
+            } catch(StaleElementReferenceException | ElementClickInterceptedException | NoSuchElementException e) {
             }
             attempts++;
         }
         return result;
     }
 
+    protected boolean isElementPresent(By locator) {
+        try {
+            wd.findElement(locator);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
 }

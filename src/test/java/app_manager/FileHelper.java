@@ -3,6 +3,7 @@ package app_manager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,9 +17,9 @@ public class FileHelper extends HelperBase {
     public void saveTickets(String path) {
         List<String> prices = getListOfTicketPrices();
 
-        try (FileWriter writer = new FileWriter(path)) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
             for (String price : prices) {
-                writer.write(price + System.lineSeparator());
+                bw.write(price + System.lineSeparator());
             }
 
         } catch (IOException e) {
