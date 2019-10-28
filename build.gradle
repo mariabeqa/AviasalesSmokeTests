@@ -14,8 +14,12 @@ dependencies {
     compile group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.0'
+    testCompile("io.github.bonigarcia:webdrivermanager:3.7.1")
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 
 task calendarTests (type: Test) {
     useTestNG() {
@@ -28,7 +32,6 @@ task basicSearchTests (type: Test) {
         suites 'src/test/resources/testng-basicsearch.xml'
     }
 }
-
 
 task complexSearchTests (type: Test) {
     useTestNG() {

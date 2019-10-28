@@ -1,5 +1,6 @@
 package app_manager;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import java.io.File;
@@ -22,6 +23,8 @@ public class ApplicationManager {
 
     public void init() throws IOException {
         properties.load(new FileReader(new File("./src/test/resources/local.properties")));
+        WebDriverManager.chromedriver().setup();
+
         wd = new ChromeDriver();
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         wd.manage().window().fullscreen();
