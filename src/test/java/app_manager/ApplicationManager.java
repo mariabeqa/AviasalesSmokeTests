@@ -24,7 +24,6 @@ public class ApplicationManager {
     public void init() throws IOException {
         properties.load(new FileReader(new File("./src/test/resources/local.properties")));
         WebDriverManager.chromedriver().setup();
-
         wd = new ChromeDriver();
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         wd.manage().window().fullscreen();
