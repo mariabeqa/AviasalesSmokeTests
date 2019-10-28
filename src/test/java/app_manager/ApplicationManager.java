@@ -22,7 +22,6 @@ public class ApplicationManager {
 
     public void init() throws IOException {
         properties.load(new FileReader(new File("./src/test/resources/local.properties")));
-
         wd = new ChromeDriver();
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         wd.manage().window().fullscreen();
@@ -35,10 +34,6 @@ public class ApplicationManager {
 
     public void openCalendar() {
         wd.get(properties.getProperty("calendar.url"));
-    }
-
-    public void openWebsite() {
-
     }
 
     public void stop() {

@@ -35,13 +35,11 @@ public class SearchHelper extends HelperBase{
 
             if (i == 1 ) moveOneMonthForward();
 
-
             if (!isComplex) {
                 selectDayFrom();
                 selectDayTo(durations[i-1]);
             } else {
                 if (i % 2 != 0) {
-
                     selectDayFrom();
                 } else {
                     selectDayTo(durations[i-1]);
