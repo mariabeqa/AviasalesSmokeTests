@@ -1,12 +1,8 @@
 package app_manager;
 
 import model.Booking;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class SearchHelper extends HelperBase{
 
@@ -59,11 +55,9 @@ public class SearchHelper extends HelperBase{
     }
 
     public void enterWhereFrom(String origin, int numOfRoutes) {
-
         WebElement fromField = wd.findElement(By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]"));
         fromField.click();
-        fromField.sendKeys(origin,  Keys.TAB);
-
+        fromField.sendKeys(origin);
     }
 
     private void selectComplexRoute() {
@@ -102,7 +96,6 @@ public class SearchHelper extends HelperBase{
         if (serviceClass != wd.findElement(By.cssSelector("label.custom-radio.--is-active div.custom-radio__caption")).getText()) {
             wd.findElement(By.xpath("//div[contains(text(),'" + serviceClass + "')]")).click();
         }
-
         wd.findElement(By.cssSelector("div.additional-fields__label")).click();
     }
 
@@ -117,15 +110,19 @@ public class SearchHelper extends HelperBase{
                 e.printStackTrace();
             }
         }
-
     }
 
     private void selectDayFrom() {
+        try {
+            wd.findElement(By.cssSelector("div.datefield-dropdown__content"));
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+            clickWithRetrial(By.cssSelector("input#departDate"));
+            e.printStackTrace();
+        }
         clickWithRetrial(By.xpath("(//div[@class ='daypicker__day-wrap'])[1]"));
     }
 
     public void moveOneMonthForward() {
         clickWithRetrial(By.cssSelector("span[aria-label='Next Month']"));
     }
-
 }

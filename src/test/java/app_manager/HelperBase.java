@@ -32,4 +32,17 @@ public class HelperBase {
             return false;
         }
     }
+
+    public String getAttributeTextWithRetrial(By by, String attribute) {
+        String result = null;
+
+        while(result == null) {
+            try {
+                String text = wd.findElement(by).getAttribute(attribute);
+                result = text;
+            } catch(StaleElementReferenceException | ElementClickInterceptedException | NoSuchElementException e) {
+            }
+        }
+        return result;
+    }
 }

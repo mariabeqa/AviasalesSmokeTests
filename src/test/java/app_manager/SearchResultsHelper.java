@@ -31,6 +31,20 @@ public class SearchResultsHelper extends HelperBase {
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
 
+    public boolean isAnySearchResultsFound() {
+        switchToSearchResultsInNewWindow();
+        wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+        WebDriverWait wait = new WebDriverWait(wd, 30);
+        boolean searchResultsFound = true;
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("li.sorting__tab.is-active")));
+        } catch (TimeoutException e) {
+            searchResultsFound = false;
+        }
+        wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        return searchResultsFound;
+    }
+
     public void switchToSearchResultsInNewWindow() {
         for(String winHandle : wd.getWindowHandles()){
             wd.switchTo().window(winHandle);

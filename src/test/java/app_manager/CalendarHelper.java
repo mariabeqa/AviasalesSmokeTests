@@ -2,6 +2,8 @@ package app_manager;
 
 import model.Booking;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Action;
@@ -14,7 +16,7 @@ public class CalendarHelper extends HelperBase{
     }
 
     public void enterSearchParameters(Booking booking, boolean isOneWay) {
-        if (isElementPresent(By.cssSelector("div#popup-calendar-tooltip"))) wd.findElement(By.cssSelector("div#popup-calendar-tooltip a.close-popup")).click();
+        if (isElementPresent(By.cssSelector("div#popup-calendar-tooltip"))) clickWithRetrial(By.cssSelector("div#popup-calendar-tooltip a.close-popup"));
         enterWhereFrom(booking.getDepartureAirports().get(0));
         enterWhereTo(booking.getDestinationAirports().get(0));
         if (isOneWay) wd.findElement(By.cssSelector("a[data-goal='one_side']")).click();
@@ -40,17 +42,23 @@ public class CalendarHelper extends HelperBase{
     }
 
     public void enterWhereFrom(String origin) {
-        clickWithRetrial(By.cssSelector("label[for='origin'] span.clear"));
-        clickWithRetrial(By.cssSelector("label[for='origin'] span.clear"));
         WebElement field = wd.findElement(By.cssSelector("input#origin"));
-        field.click();
-        field.sendKeys(origin);
+        clearPrepopulatedText();
+        field.sendKeys(origin, Keys.ALT);
+    }
+
+    private void clearPrepopulatedText() {
+        String prepopulatedText = getAttributeTextWithRetrial(By.cssSelector("input#origin"), "data-old-value");
+
+        while (wd.findElement(By.cssSelector("input#origin")).getAttribute("data-old-value").equals(prepopulatedText)) {
+            clickWithRetrial(By.cssSelector("label[for='origin'] span.clear"));
+        }
     }
 
     public void enterWhereTo(String destination) {
         WebElement field = wd.findElement(By.cssSelector("input#destination"));
         field.clear();
-        field.sendKeys(destination);
+        field.sendKeys(destination, Keys.ALT);
     }
 
     public void setDurationTo10Days() {
@@ -123,5 +131,15 @@ public class CalendarHelper extends HelperBase{
 
     public String getDayInSearchResults() {
         return wd.findElement(By.cssSelector("a.best-value.selectable.calendar-day span.day-number")).getText();
+    }
+
+    public boolean isSearchResultsFound() {
+        boolean searchResultsFound;
+        try {
+            searchResultsFound = !wd.findElement(By.cssSelector("div.c-calendar div.months_no_found strong")).isDisplayed();
+        } catch (NoSuchElementException e) {
+            searchResultsFound = true;
+        }
+        return searchResultsFound;
     }
 }

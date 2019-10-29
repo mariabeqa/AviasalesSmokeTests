@@ -26,9 +26,11 @@ public class CalendarTests extends TestBase {
         String selectedMonth = app.calendar().selectMonth();
         app.calendar().setDurationTo10Days();
         app.calendar().search();
-        Assert.assertEquals(app.calendar().getMonthInSearchResults(), selectedMonth);
-        String cheapesPriceOnTheButton = app.calendar().showCheapest();
-        Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapesPriceOnTheButton);
+        if (app.calendar().isSearchResultsFound()) {
+            Assert.assertEquals(app.calendar().getMonthInSearchResults(), selectedMonth);
+            String cheapesPriceOnTheButton = app.calendar().showCheapest();
+            Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapesPriceOnTheButton);
+        }
     }
 
     @Test(dataProvider = "testData")
@@ -38,9 +40,11 @@ public class CalendarTests extends TestBase {
         List<String> selectedMonths = app.calendar().selectSeason("Зима");
         app.calendar().setDurationTo10Days();
         app.calendar().search();
-        Assert.assertEquals(app.calendar().getMonthsInSearchResults(), selectedMonths);
-        String cheapestPriceOnTheButton = app.calendar().showCheapest();
-        Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapestPriceOnTheButton);
+        if (app.calendar().isSearchResultsFound()) {
+            Assert.assertEquals(app.calendar().getMonthsInSearchResults(), selectedMonths);
+            String cheapestPriceOnTheButton = app.calendar().showCheapest();
+            Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapestPriceOnTheButton);
+        }
     }
 
     @Test(dataProvider = "testData")
@@ -49,7 +53,9 @@ public class CalendarTests extends TestBase {
         app.calendar().enterSearchParameters(booking, true);
         HashMap<String, String> selectedDate = app.calendar().selectExactDepartureDate();
         app.calendar().search();
-        Assert.assertEquals(app.calendar().getMonthInSearchResults(), selectedDate.get("month"));
-        Assert.assertEquals(app.calendar().getDayInSearchResults(), selectedDate.get("day"));
+        if (app.calendar().isSearchResultsFound()) {
+            Assert.assertEquals(app.calendar().getMonthInSearchResults(), selectedDate.get("month"));
+            Assert.assertEquals(app.calendar().getDayInSearchResults(), selectedDate.get("day"));
+        }
     }
 }
