@@ -31,7 +31,7 @@ public class SearchHelper extends HelperBase{
             if (i >= 3) addRoute();
             enterWhereFrom(depAirports.get(i-1), i);
             enterWhereTo(arrAirports.get(i-1), i);
-            checkCalendarIsOpen();
+
             if (i == 1 ) moveOneMonthForward();
 
             if (!isComplex) {
@@ -68,7 +68,7 @@ public class SearchHelper extends HelperBase{
         By locator = By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]");
         WebElement toField = wd.findElement(locator);
         toField.click();
-        toField.sendKeys(whereTo);
+        toField.sendKeys(whereTo, Keys.TAB);
     }
 
     public void enterWhereFrom(String origin, int numOfRoutes) {
