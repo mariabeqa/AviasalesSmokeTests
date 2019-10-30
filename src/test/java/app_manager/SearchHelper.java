@@ -137,7 +137,6 @@ public class SearchHelper extends HelperBase{
             wait.until((WebDriver wd) -> wd.findElement(By.cssSelector("input#departDate")));
             wd.findElement(By.cssSelector("input#departDate")).click();
             moveOneMonthForward();
-            e.printStackTrace();
         }
         clickWithRetrial(By.xpath("(//div[@class ='daypicker__day-wrap'])[1]"));
         wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
