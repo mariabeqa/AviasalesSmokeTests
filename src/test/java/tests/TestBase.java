@@ -26,5 +26,4 @@ public class TestBase {
     public static void tearDown() throws IOException {
         app.stop();
     }
-
 }

@@ -28,8 +28,8 @@ public class CalendarTests extends TestBase {
         app.calendar().search();
         if (app.calendar().isSearchResultsFound()) {
             Assert.assertEquals(app.calendar().getMonthInSearchResults(), selectedMonth);
-            String cheapesPriceOnTheButton = app.calendar().showCheapest();
-            Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapesPriceOnTheButton);
+            String cheapestPriceOnTheButton = app.calendar().getCheapestPrice();
+            Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapestPriceOnTheButton);
         }
     }
 
@@ -42,7 +42,7 @@ public class CalendarTests extends TestBase {
         app.calendar().search();
         if (app.calendar().isSearchResultsFound()) {
             Assert.assertEquals(app.calendar().getMonthsInSearchResults(), selectedMonths);
-            String cheapestPriceOnTheButton = app.calendar().showCheapest();
+            String cheapestPriceOnTheButton = app.calendar().getCheapestPrice();
             Assert.assertEquals(app.calendar().getCheapestPriceFromTheTable(), cheapestPriceOnTheButton);
         }
     }

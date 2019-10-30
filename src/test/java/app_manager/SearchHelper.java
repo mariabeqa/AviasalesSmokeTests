@@ -31,7 +31,7 @@ public class SearchHelper extends HelperBase{
             if (i >= 3) addRoute();
             enterWhereFrom(depAirports.get(i-1), i);
             enterWhereTo(arrAirports.get(i-1), i);
-
+            checkCalendarIsOpen();
             if (i == 1 ) moveOneMonthForward();
 
             if (!isComplex) {
@@ -39,7 +39,6 @@ public class SearchHelper extends HelperBase{
                 selectDayTo(durations[i-1]);
             } else {
                 if (i % 2 != 0) {
-
                     selectDayFrom();
                 } else {
                     selectDayTo(durations[i-1]);
@@ -55,6 +54,7 @@ public class SearchHelper extends HelperBase{
              wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("span.daypicker__navbar-button.js-next-month")));
         } catch (TimeoutException e) {
             wd.findElement(By.cssSelector("input#departDate")).click();
+            System.out.println("exception");
         } finally {
             wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         }
@@ -136,7 +136,6 @@ public class SearchHelper extends HelperBase{
     }
 
     private void selectDayFrom() {
-        checkCalendarIsOpen();
         clickWithRetrial(By.xpath("(//div[@class ='daypicker__day-wrap'])[1]"));
     }
 

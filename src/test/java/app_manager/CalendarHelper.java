@@ -88,8 +88,8 @@ public class CalendarHelper extends HelperBase{
         return monthNames;
     }
 
-    public String showCheapest() {
-        wd.findElement(By.cssSelector("a.value.best-link")).click();
+    public String getCheapestPrice() {
+        wd.findElement(By.cssSelector("a.value.best-link"));
         return wd.findElement(By.cssSelector("a.value.best-link span span span:nth-child(1)")).getText().replace(".", "");
     }
 
