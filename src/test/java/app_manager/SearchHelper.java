@@ -2,6 +2,7 @@ package app_manager;
 
 import model.Booking;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +31,7 @@ public class SearchHelper extends HelperBase{
             if (i >= 3) addRoute();
             enterWhereFrom(depAirports.get(i-1), i);
             enterWhereTo(arrAirports.get(i-1), i);
-
+            checkCalendarIsOpen();
             if (i == 1 ) moveOneMonthForward();
 
             if (!isComplex) {
@@ -38,11 +39,24 @@ public class SearchHelper extends HelperBase{
                 selectDayTo(durations[i-1]);
             } else {
                 if (i % 2 != 0) {
+
                     selectDayFrom();
                 } else {
                     selectDayTo(durations[i-1]);
                 }
             }
+        }
+    }
+
+    private void checkCalendarIsOpen() {
+        wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+        try {
+             WebDriverWait wait = new WebDriverWait(wd, 1);
+             wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("span.daypicker__navbar-button.js-next-month")));
+        } catch (TimeoutException e) {
+            wd.findElement(By.cssSelector("input#departDate")).click();
+        } finally {
+            wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         }
     }
 
@@ -54,7 +68,7 @@ public class SearchHelper extends HelperBase{
         By locator = By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]");
         WebElement toField = wd.findElement(locator);
         toField.click();
-        toField.sendKeys(whereTo, Keys.TAB);
+        toField.sendKeys(whereTo);
     }
 
     public void enterWhereFrom(String origin, int numOfRoutes) {
@@ -91,7 +105,7 @@ public class SearchHelper extends HelperBase{
 
         if (kids > 0) {
             for (int i = 0; i < kids; i++) {
-                wd.findElement(By.cssSelector("div.additional-fields__passenger-row:nth-child(2) a.--increment")).click();
+                clickWithRetrial(By.cssSelector("div.additional-fields__passenger-row:nth-child(2) a.--increment"));
             }
         }
     }
@@ -122,18 +136,8 @@ public class SearchHelper extends HelperBase{
     }
 
     private void selectDayFrom() {
-        wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
-        try {
-            WebDriverWait wait = new WebDriverWait(wd, 2);
-            wait.until((WebDriver wd) -> wd.findElement(By.cssSelector("div.datefield-dropdown__content")));
-        } catch (TimeoutException | StaleElementReferenceException e) {
-            WebDriverWait wait = new WebDriverWait(wd, 2);
-            wait.until((WebDriver wd) -> wd.findElement(By.cssSelector("input#departDate")));
-            wd.findElement(By.cssSelector("input#departDate")).click();
-            moveOneMonthForward();
-        }
+        checkCalendarIsOpen();
         clickWithRetrial(By.xpath("(//div[@class ='daypicker__day-wrap'])[1]"));
-        wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }
 
     public int getAvailableDepartureDays() {

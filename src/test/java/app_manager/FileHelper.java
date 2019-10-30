@@ -29,7 +29,6 @@ public class FileHelper extends HelperBase {
 
     public List<String> getListOfTicketPrices() {
         List<WebElement> pricesOnButton = wd.findElements(By.cssSelector("span.buy-button__price span.price.--rub"));
-        System.out.println(pricesOnButton.size() + " size of webelement list");
         List<String> prices = new ArrayList<>();
 
         int count = 1;

@@ -12,7 +12,7 @@ public class HelperBase {
     public boolean clickWithRetrial(By by) {
         boolean result = false;
         int attempts = 0;
-        while(attempts < 5) {
+        while(attempts < 3) {
             try {
                 wd.findElement(by).click();
                 result = true;
