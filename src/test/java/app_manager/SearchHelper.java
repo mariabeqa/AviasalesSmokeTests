@@ -2,6 +2,7 @@ package app_manager;
 
 import model.Booking;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -66,8 +67,10 @@ public class SearchHelper extends HelperBase{
         }
     }
 
-    private boolean checkThatTextIsEntereCorrectly(String origin, By locator) {
-        return origin.equals(wd.findElement(locator).getAttribute("value"));
+    private boolean checkThatTextIsEntereCorrectly(String expected, By locator) {
+        WebElement input = wd.findElement(locator);
+        String actual = input.getAttribute("value");
+        return expected.equals(actual);
     }
 
     private void selectComplexRoute() {
