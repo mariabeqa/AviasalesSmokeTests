@@ -2,7 +2,6 @@ package app_manager;
 
 import model.Booking;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -52,25 +51,17 @@ public class SearchHelper extends HelperBase{
     }
 
     public void enterWhereTo(String whereTo, int numOfRoutes) {
-        while (!checkThatTextIsEntereCorrectly(whereTo, By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]"))) {
-            WebElement toField = wd.findElement(By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]"));
-            toField.click();
-            toField.sendKeys(whereTo, Keys.TAB);
-        }
+        By locator = By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]");
+        WebElement toField = wd.findElement(locator);
+        toField.click();
+        toField.sendKeys(whereTo, Keys.TAB);
     }
 
     public void enterWhereFrom(String origin, int numOfRoutes) {
-        while (!checkThatTextIsEntereCorrectly(origin, By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]"))) {
-            WebElement fromField = wd.findElement(By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]"));
-            fromField.click();
-            fromField.sendKeys(origin);
-        }
-    }
-
-    private boolean checkThatTextIsEntereCorrectly(String expected, By locator) {
-        WebElement input = wd.findElement(locator);
-        String actual = input.getAttribute("value");
-        return expected.equals(actual);
+        By locator = By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]");
+        WebElement fromField = wd.findElement(locator);
+        fromField.click();
+        fromField.sendKeys(origin, Keys.TAB);
     }
 
     private void selectComplexRoute() {
