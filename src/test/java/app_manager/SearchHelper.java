@@ -2,7 +2,9 @@ package app_manager;
 
 import model.Booking;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class SearchHelper extends HelperBase{
 
@@ -49,15 +51,23 @@ public class SearchHelper extends HelperBase{
     }
 
     public void enterWhereTo(String whereTo, int numOfRoutes) {
-        WebElement toField = wd.findElement(By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]"));
-        toField.click();
-        toField.sendKeys(whereTo, Keys.TAB);
+        while (!checkThatTextIsEntereCorrectly(whereTo, By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]"))) {
+            WebElement toField = wd.findElement(By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]"));
+            toField.click();
+            toField.sendKeys(whereTo, Keys.TAB);
+        }
     }
 
     public void enterWhereFrom(String origin, int numOfRoutes) {
-        WebElement fromField = wd.findElement(By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]"));
-        fromField.click();
-        fromField.sendKeys(origin);
+        while (!checkThatTextIsEntereCorrectly(origin, By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]"))) {
+            WebElement fromField = wd.findElement(By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]"));
+            fromField.click();
+            fromField.sendKeys(origin);
+        }
+    }
+
+    private boolean checkThatTextIsEntereCorrectly(String origin, By locator) {
+        return origin.equals(wd.findElement(locator).getAttribute("value"));
     }
 
     private void selectComplexRoute() {
@@ -94,7 +104,8 @@ public class SearchHelper extends HelperBase{
 
     private void selectServiceClass(String serviceClass) {
         if (serviceClass != wd.findElement(By.cssSelector("label.custom-radio.--is-active div.custom-radio__caption")).getText()) {
-            wd.findElement(By.xpath("//div[contains(text(),'" + serviceClass + "')]")).click();
+            By locator = By.xpath("//div[contains(text(),'" + serviceClass + "')]");
+            clickWithRetrial(locator);
         }
         wd.findElement(By.cssSelector("div.additional-fields__label")).click();
     }
@@ -104,7 +115,11 @@ public class SearchHelper extends HelperBase{
         while (size == 0) {
             try {
                 List<WebElement> daysAvailable = wd.findElements(By.xpath("//div[@class ='daypicker__day-wrap']"));
-                daysAvailable.get(duration).click();
+                if (daysAvailable.size() < duration) {
+                    daysAvailable.get(daysAvailable.size() - 1).click();
+                } else {
+                    daysAvailable.get(duration).click();
+                }
                 size = daysAvailable.size();
             } catch (NoSuchElementException e) {
                 e.printStackTrace();
@@ -113,16 +128,29 @@ public class SearchHelper extends HelperBase{
     }
 
     private void selectDayFrom() {
+        wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
         try {
-            wd.findElement(By.cssSelector("div.datefield-dropdown__content"));
-        } catch (NoSuchElementException | StaleElementReferenceException e) {
-            clickWithRetrial(By.cssSelector("input#departDate"));
+            WebDriverWait wait = new WebDriverWait(wd, 2);
+            wait.until((WebDriver wd) -> wd.findElement(By.cssSelector("div.datefield-dropdown__content")));
+        } catch (TimeoutException | StaleElementReferenceException e) {
+            WebDriverWait wait = new WebDriverWait(wd, 2);
+            wait.until((WebDriver wd) -> wd.findElement(By.cssSelector("input#departDate")));
+            wd.findElement(By.cssSelector("input#departDate")).click();
+            moveOneMonthForward();
             e.printStackTrace();
         }
         clickWithRetrial(By.xpath("(//div[@class ='daypicker__day-wrap'])[1]"));
+        wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    }
+
+    public int getAvailableDepartureDays() {
+        return  wd.findElements(By.xpath("//div[@class ='daypicker__day-wrap']")).size();
     }
 
     public void moveOneMonthForward() {
         clickWithRetrial(By.cssSelector("span[aria-label='Next Month']"));
+        if (getAvailableDepartureDays() < 10) {
+            clickWithRetrial(By.cssSelector("span[aria-label='Next Month']"));
+        }
     }
 }

@@ -26,7 +26,7 @@ public class SearchResultsHelper extends HelperBase {
     private void waitForSearchResultsToLoad() {
         switchToSearchResultsInNewWindow();
         wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
-        WebDriverWait wait = new WebDriverWait(wd, 30);
+        WebDriverWait wait = new WebDriverWait(wd, 40);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("li.sorting__tab.is-active")));
         wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }

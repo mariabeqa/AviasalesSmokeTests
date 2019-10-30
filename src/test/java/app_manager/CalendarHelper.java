@@ -99,8 +99,8 @@ public class CalendarHelper extends HelperBase{
         for (WebElement cell : cells) {
             if (!cell.getText().isEmpty()) prices.add(cell.getText().replace(".",""));
         }
-        int n = prices.stream().mapToInt(el -> Integer.valueOf(el)).min().getAsInt();
-        return String.valueOf(n);
+        int minPrice = prices.stream().mapToInt(el -> Integer.valueOf(el)).sorted().min().getAsInt();
+        return String.valueOf(minPrice);
     }
 
     public List<String> selectSeason(String season) {

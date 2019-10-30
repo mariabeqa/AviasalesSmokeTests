@@ -25,7 +25,7 @@ public class ApplicationManager {
         properties.load(new FileReader(new File("./src/test/resources/local.properties")));
         WebDriverManager.chromedriver().setup();
         wd = new ChromeDriver();
-        wd.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         wd.manage().window().fullscreen();
         wd.get(properties.getProperty("site.url"));
         searchHelper = new SearchHelper(wd);

@@ -18,6 +18,8 @@ public class HelperBase {
                 result = true;
                 break;
             } catch(StaleElementReferenceException | ElementClickInterceptedException | NoSuchElementException e) {
+            } catch (ElementNotInteractableException e) {
+                wd.navigate().refresh();
             }
             attempts++;
         }
