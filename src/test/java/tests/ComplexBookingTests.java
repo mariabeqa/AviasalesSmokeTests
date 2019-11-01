@@ -44,23 +44,25 @@ public class ComplexBookingTests extends TestBase {
     @Test(dataProvider = "testData")
     public void testComplexBookingFlow(Booking booking) {
         app.search().enterSearchParameters(booking, true);
-        app.searchResults().filterByCheapest();
-        app.searchResults().filterByTransfer(booking.getTransfersAmount());
-        app.searchResults().filterByBuggage(booking.hasBuggage());
+        if (app.searchResults().isAnySearchResultsFound()) {
+            app.searchResults().filterByCheapest();
+            app.searchResults().filterByTransfer(booking.getTransfersAmount());
+            app.searchResults().filterByBuggage(booking.hasBuggage());
 
-        Assert.assertEquals(app.searchResults().getDepartureAirport(1), booking.getDepartureAirports().get(0));
-        Assert.assertEquals(app.searchResults().getArrivalAirport(1), booking.getDestinationAirports().get(0));
-        Assert.assertEquals(app.searchResults().getDepartureAirport(2), booking.getDepartureAirports().get(1));
-        Assert.assertEquals(app.searchResults().getArrivalAirport(2), booking.getDestinationAirports().get(1));
-        if (booking.getNumberOfRoutes() == 3) {
-            Assert.assertEquals(app.searchResults().getDepartureAirport(3), booking.getDepartureAirports().get(2));
-            Assert.assertEquals(app.searchResults().getArrivalAirport(3), booking.getDestinationAirports().get(2));
-        }
+            Assert.assertEquals(app.searchResults().getDepartureAirport(1), booking.getDepartureAirports().get(0));
+            Assert.assertEquals(app.searchResults().getArrivalAirport(1), booking.getDestinationAirports().get(0));
+            Assert.assertEquals(app.searchResults().getDepartureAirport(2), booking.getDepartureAirports().get(1));
+            Assert.assertEquals(app.searchResults().getArrivalAirport(2), booking.getDestinationAirports().get(1));
+            if (booking.getNumberOfRoutes() == 3) {
+                Assert.assertEquals(app.searchResults().getDepartureAirport(3), booking.getDepartureAirports().get(2));
+                Assert.assertEquals(app.searchResults().getArrivalAirport(3), booking.getDestinationAirports().get(2));
+            }
 
-        if (booking.hasBuggage()) {
-            Assert.assertEquals(app.searchResults().getTicketsWithBaggageOption().stream()
-                    .map(e -> e.getText()).collect(Collectors.toList()).size(), app.searchResults().getAmountOfTicketsFound());
+            if (booking.hasBuggage()) {
+                Assert.assertEquals(app.searchResults().getTicketsWithBaggageOption().stream()
+                        .map(e -> e.getText()).collect(Collectors.toList()).size(), app.searchResults().getAmountOfTicketsFound());
+            }
+            app.file().saveTickets(filePath);
         }
-        app.file().saveTickets(filePath);
     }
 }

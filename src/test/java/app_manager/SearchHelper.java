@@ -2,6 +2,7 @@ package app_manager;
 
 import model.Booking;
 import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.util.List;
@@ -30,6 +31,14 @@ public class SearchHelper extends HelperBase{
         for (int i = 1; i <= depAirports.size(); i ++) {
             if (i >= 3) addRoute();
             enterWhereFrom(depAirports.get(i-1), i);
+            if (isComplex) {
+                boolean isTextEnteredCorrectly = checkThatAirportIsEntered(i, depAirports.get(i-1));
+                if(!isTextEnteredCorrectly) {
+                    By locator = By.xpath("(//input[@id='origin'])[" + i + "]");
+                    clearField(locator);
+                    enterWhereFrom(depAirports.get(i-1), i);
+                }
+            }
             enterWhereTo(arrAirports.get(i-1), i);
             checkCalendarIsOpen();
             if (i == 1 ) moveOneMonthForward();
@@ -45,6 +54,18 @@ public class SearchHelper extends HelperBase{
                 }
             }
         }
+    }
+
+    private void clearField(By locator) {
+        wd.findElement(locator).clear();
+        new WebDriverWait(wd, 2)
+                .until((ExpectedCondition<Object>) wd -> wd.findElement(locator)
+                        .getAttribute("value").length() == 0);
+    }
+
+    private boolean checkThatAirportIsEntered(int fromFieldIndex, String expected) {
+        String actual = wd.findElement(By.cssSelector("div.of_multiway_segment:nth-child(" + fromFieldIndex + ") input#origin")).getAttribute("value");
+        return expected.equals(actual);
     }
 
     private void checkCalendarIsOpen() {
@@ -68,12 +89,14 @@ public class SearchHelper extends HelperBase{
         By locator = By.xpath("(//input[@id='destination'])[" + numOfRoutes + "]");
         WebElement toField = wd.findElement(locator);
         toField.click();
+        clearField(locator);
         toField.sendKeys(whereTo, Keys.TAB);
     }
 
     public void enterWhereFrom(String origin, int numOfRoutes) {
         By locator = By.xpath("(//input[@id='origin'])[" + numOfRoutes + "]");
         WebElement fromField = wd.findElement(locator);
+        clearField(locator);
         fromField.click();
         fromField.sendKeys(origin, Keys.TAB);
     }
