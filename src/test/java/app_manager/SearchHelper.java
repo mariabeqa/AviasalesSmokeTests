@@ -40,8 +40,7 @@ public class SearchHelper extends HelperBase{
                 }
             }
             enterWhereTo(arrAirports.get(i-1), i);
-            checkCalendarIsOpen();
-            if (i == 1 ) moveOneMonthForward();
+            checkCalendarIsOpen(i);
 
             if (!isComplex) {
                 selectDayFrom();
@@ -68,7 +67,7 @@ public class SearchHelper extends HelperBase{
         return expected.equals(actual);
     }
 
-    private void checkCalendarIsOpen() {
+    private void checkCalendarIsOpen(int i) {
         wd.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
         try {
              WebDriverWait wait = new WebDriverWait(wd, 1);
@@ -78,6 +77,7 @@ public class SearchHelper extends HelperBase{
             System.out.println("exception");
         } finally {
             wd.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            if (i == 1) moveOneMonthForward();
         }
     }
 
@@ -152,7 +152,7 @@ public class SearchHelper extends HelperBase{
                     daysAvailable.get(duration).click();
                 }
                 size = daysAvailable.size();
-            } catch (NoSuchElementException e) {
+            } catch (NoSuchElementException | StaleElementReferenceException e) {
                 e.printStackTrace();
             }
         }
@@ -167,9 +167,9 @@ public class SearchHelper extends HelperBase{
     }
 
     public void moveOneMonthForward() {
-        clickWithRetrial(By.cssSelector("span[aria-label='Next Month']"));
-        if (getAvailableDepartureDays() < 10) {
             clickWithRetrial(By.cssSelector("span[aria-label='Next Month']"));
-        }
+            if (getAvailableDepartureDays() < 10) {
+                clickWithRetrial(By.cssSelector("span[aria-label='Next Month']"));
+            }
     }
 }
